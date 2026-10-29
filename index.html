@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ノアとグルムの月灯り書庫</title>
+  <style>
+    :root {
+      --bg-dark: #0a0c16;
+      --bg-surface: #121626;
+      --bg-card: #181d33;
+      --text-main: #f4f4f7;
+      --text-sub: #b7bfd3;
+      --text-muted: #79839b;
+      --gold-accent: #cfa858;
+      --gold-light: #f7e7be;
+      --lace-border: rgba(207, 168, 88, 0.35);
+      --purple-mystic: #322644;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 50% 0%, #1e1b38 0%, transparent 75%),
+        radial-gradient(circle at 85% 90%, #1a152d 0%, transparent 65%);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      line-height: 1.75;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .stars {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      background: radial-gradient(1px 1px at 25px 40px, #ffffffaa, transparent),
+                  radial-gradient(1.5px 1.5px at 120px 180px, #f7e7be88, transparent),
+                  radial-gradient(1px 1px at 240px 90px, #ffffffaa, transparent),
+                  radial-gradient(1px 1px at 320px 280px, #cfa85888, transparent);
+      background-size: 360px 360px;
+      opacity: 0.5;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 20px 18px 48px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-top: 8px;
+    }
+
+    .app-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      color: var(--gold-light);
+      text-shadow: 0 0 16px rgba(207, 168, 88, 0.4);
+      margin-bottom: 4px;
+    }
+
+    .app-subtitle {
+      font-size: 0.85rem;
+      letter-spacing: 0.16em;
+      color: var(--text-sub);
+    }
+
+    .view-section {
+      display: none;
+      animation: fadeIn 0.45s ease-out forwards;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 52px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: #0b0e17;
+      background: linear-gradient(135deg, #f7e7be 0%, #cfa858 100%);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(207, 168, 88, 0.28);
+      transition: transform 0.15s ease, filter 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+      filter: brightness(0.92);
+    }
+
+    .btn-secondary {
+      background: rgba(24, 29, 51, 0.85);
+      color: var(--text-main);
+      border: 1px solid var(--lace-border);
+      box-shadow: none;
+    }
+
+    .btn-secondary:active {
+      background: rgba(33, 40, 70, 0.9);
+    }
+
+    .btn:disabled, .btn.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+      filter: grayscale(0.5);
+    }
+
+    .glass-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--lace-border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .char-banner-frame {
+      position: relative;
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 1.5px solid var(--gold-accent);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 16px rgba(207, 168, 88, 0.2);
+      background: #0f1322;
+      aspect-ratio: 16 / 9;
+    }
+
+    .char-banner-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    .char-result-frame {
+      position: relative;
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      margin: 22px 0 16px;
+      border: 1.5px solid var(--gold-accent);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 14px rgba(207, 168, 88, 0.2);
+      background: #0f1322;
+      aspect-ratio: 16 / 9;
+    }
+
+    .char-result-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    .home-desc {
+      font-size: 0.94rem;
+      color: var(--text-sub);
+      text-align: center;
+      margin-bottom: 22px;
+      line-height: 1.85;
+      padding: 0 4px;
+    }
+
+    .theme-selection-title {
+      font-size: 1.15rem;
+      text-align: center;
+      margin-bottom: 6px;
+      color: var(--gold-light);
+    }
+
+    .theme-selection-sub {
+      font-size: 0.85rem;
+      text-align: center;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+    }
+
+    .theme-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .theme-item {
+      display: flex;
+      align-items: center;
+      padding: 16px 18px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--lace-border);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .theme-item:active {
+      transform: scale(0.99);
+    }
+
+    .theme-item.selected {
+      border-color: var(--gold-accent);
+      background: linear-gradient(90deg, #1b203a 0%, #291e3d 100%);
+      box-shadow: 0 0 16px rgba(207, 168, 88, 0.25);
+    }
+
+    .theme-icon {
+      font-size: 1.5rem;
+      margin-right: 14px;
+      width: 36px;
+      text-align: center;
+    }
+
+    .theme-info {
+      flex: 1;
+    }
+
+    .theme-name {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .theme-detail {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .deck-info {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .deck-info h3 {
+      font-size: 1.1rem;
+      color: var(--gold-light);
+      margin-bottom: 4px;
+    }
+
+    .deck-info p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+      perspective: 1000px;
+    }
+
+    .tarot-card {
+      position: relative;
+      aspect-ratio: 1 / 1.62;
+      border-radius: 10px;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .tarot-card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-back {
+      background-color: #0b1126;
+      border: 1.5px solid var(--gold-accent);
+      padding: 0;
+    }
+
+    .card-back-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .card-front {
+      background: #141829;
+      border: 1.5px solid var(--gold-accent);
+      transform: rotateY(180deg);
+      padding: 0;
+      position: relative;
+    }
+
+    .card-front img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .theme-badge {
+      display: inline-block;
+      font-size: 0.78rem;
+      padding: 4px 14px;
+      border-radius: 20px;
+      background: rgba(50, 38, 68, 0.7);
+      border: 1px solid var(--gold-accent);
+      color: var(--gold-light);
+      margin-bottom: 12px;
+    }
+
+    .result-card-header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .result-card-num {
+      font-size: 0.95rem;
+      color: var(--gold-accent);
+      font-family: serif;
+      letter-spacing: 0.18em;
+    }
+
+    .result-card-title {
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      margin-bottom: 6px;
+    }
+
+    .result-card-symbol {
+      font-size: 0.86rem;
+      color: var(--text-sub);
+    }
+
+    .card-visual-area {
+      width: 180px;
+      aspect-ratio: 1 / 1.65;
+      margin: 16px auto 24px;
+      border-radius: 12px;
+      border: 2px solid var(--gold-accent);
+      background: #0f1322;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 18px rgba(207, 168, 88, 0.25);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-visual-area img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card-visual-temp {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .card-visual-temp .tarot-icon {
+      font-size: 2.4rem;
+      color: var(--gold-light);
+    }
+
+    .result-section {
+      margin-bottom: 18px;
+      padding: 16px 18px;
+      background: rgba(24, 29, 51, 0.7);
+      border-radius: 14px;
+      border-left: 3px solid var(--gold-accent);
+      border-top: 1px solid rgba(207, 168, 88, 0.15);
+    }
+
+    .result-section h4 {
+      font-size: 0.95rem;
+      color: var(--gold-light);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .result-section p {
+      font-size: 0.93rem;
+      color: var(--text-main);
+      line-height: 1.8;
+    }
+
+    .dialogue-box {
+      margin-bottom: 18px;
+      padding: 18px;
+      border-radius: 14px;
+      position: relative;
+    }
+
+    .dialogue-noah {
+      background: linear-gradient(135deg, rgba(27, 24, 46, 0.88) 0%, rgba(18, 16, 32, 0.96) 100%);
+      border: 1px solid rgba(175, 148, 219, 0.4);
+      border-left: 3px solid #bba3e8;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+    }
+
+    .dialogue-glum {
+      background: linear-gradient(135deg, rgba(34, 30, 48, 0.88) 0%, rgba(20, 18, 29, 0.96) 100%);
+      border: 1px solid rgba(207, 168, 88, 0.4);
+      border-left: 3px solid var(--gold-accent);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+    }
+
+    .speaker-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .speaker-noah { color: #d6c7ff; }
+    .speaker-glum { color: var(--gold-light); }
+
+    .dialogue-text {
+      font-size: 0.94rem;
+      line-height: 1.85;
+      color: var(--text-main);
+    }
+
+    .note-promo {
+      text-align: center;
+      padding: 22px 18px;
+      background: linear-gradient(180deg, rgba(24, 29, 51, 0.9) 0%, rgba(15, 18, 30, 0.95) 100%);
+      border: 1px solid var(--lace-border);
+      border-radius: 16px;
+      margin: 26px 0 20px;
+    }
+
+    .note-promo h4 {
+      font-size: 1.05rem;
+      color: var(--gold-light);
+      margin-bottom: 8px;
+    }
+
+    .note-promo p {
+      font-size: 0.86rem;
+      color: var(--text-sub);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .note-status-note {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="stars"></div>
+
+<div class="container">
+  <header>
+    <h1 class="app-title">ノアとグルムの月灯り書庫</h1>
+    <p class="app-subtitle">月明かりの下で、心の声を聴く。</p>
+  </header>
+
+  <!-- 画面A：ホーム -->
+  <section id="view-home" class="view-section active">
+    <div class="char-banner-frame">
+      <img id="homeCharImg" 
+           src="https://assets.st-note.com/production/uploads/images/326505131/rectangle_large_type_2_e0e3c93da57cb693399075550f4ee1e8.jpg?width=1200" 
+           alt="ノアとグルムの月灯り書庫">
+    </div>
+
+    <div class="glass-card">
+      <p class="home-desc">
+        迷いや悩みを抱えたとき、タロットカードはあなたの気持ちを見つめ直す小さなきっかけになります。<br><br>
+        今のあなたに気になるカードを、一枚選んでみてください。
+      </p>
+      <button class="btn" onclick="goToThemeSelect()">占いを始める</button>
+    </div>
+  </section>
+
+  <!-- 画面B：テーマ選択 -->
+  <section id="view-theme" class="view-section">
+    <h2 class="theme-selection-title">占いたいテーマを選んでください</h2>
+    <p class="theme-selection-sub">いま、あなたの心が求めているものは何ですか？</p>
+
+    <div class="theme-list">
+      <div class="theme-item selected" onclick="selectTheme('love', this)">
+        <div class="theme-icon">🕊️</div>
+        <div class="theme-info">
+          <div class="theme-name">恋愛・対人関係</div>
+          <div class="theme-detail">パートナー、友人、身近な人との距離感や気持ち</div>
+        </div>
+      </div>
+
+      <div class="theme-item" onclick="selectTheme('work', this)">
+        <div class="theme-icon">🧭</div>
+        <div class="theme-info">
+          <div class="theme-name">仕事・転機</div>
+          <div class="theme-detail">進むべき方向、挑戦、日々の役割や選択</div>
+        </div>
+      </div>
+
+      <div class="theme-item" onclick="selectTheme('self', this)">
+        <div class="theme-icon">🪞</div>
+        <div class="theme-info">
+          <div class="theme-name">自分自身・心の整理</div>
+          <div class="theme-detail">抱えている不安、休息、自分らしさの再発見</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button class="btn" onclick="goToCardSelect()">カードを選ぶ</button>
+      <button class="btn btn-secondary" onclick="goToHome()">書庫のトップへ戻る</button>
+    </div>
+  </section>
+
+  <!-- 画面C：カード選択 -->
+  <section id="view-cards" class="view-section">
+    <div class="deck-info">
+      <h3>気になるカードを1枚選んでください</h3>
+      <p>深呼吸をして、直感でそっと触れてみてください。</p>
+    </div>
+
+    <div class="card-grid" id="cardGrid"></div>
+
+    <div class="button-group">
+      <button class="btn btn-secondary" onclick="goToThemeSelect()">テーマを選び直す</button>
+    </div>
+  </section>
+
+  <!-- 画面D：占い結果 -->
+  <section id="view-result" class="view-section">
+    <div style="text-align: center;">
+      <span class="theme-badge" id="resultThemeBadge">テーマ</span>
+    </div>
+
+    <div class="result-card-header">
+      <div class="result-card-num" id="resultCardNum">0</div>
+      <h2 class="result-card-title" id="resultCardName">カード名</h2>
+      <p class="result-card-symbol" id="resultCardSymbol">象徴</p>
+    </div>
+
+    <div class="card-visual-area" id="resultCardVisualArea"></div>
+
+    <div class="dialogue-box dialogue-noah">
+      <div class="speaker-label speaker-noah">✦ ノアからのメッセージ</div>
+      <p class="dialogue-text" id="resultNoahMsg"></p>
+    </div>
+
+    <div class="result-section">
+      <h4 id="resultThemeHeading">✦ テーマに応じた解釈</h4>
+      <p id="resultThemeMsg"></p>
+    </div>
+
+    <div class="result-section">
+      <h4>✦ 今日からできる小さな一歩</h4>
+      <p id="resultActionMsg"></p>
+    </div>
+
+    <div class="result-section">
+      <h4>✦ 自分に問いかける質問</h4>
+      <p id="resultQuestionMsg"></p>
+    </div>
+
+    <!-- 占い結果画面用画像：大文字小文字などを自動判定して読み込みます -->
+    <div class="char-result-frame">
+      <img id="resultCharImg" 
+           src="IMG_0083.png" 
+           onerror="if(!this.dataset.t){this.dataset.t='1';this.src='IMG_0083.PNG';}else if(this.dataset.t==='1'){this.dataset.t='2';this.src='IMG_0083_89e5e03f.png';}else if(this.dataset.t==='2'){this.dataset.t='3';this.src='IMG_0083.jpeg';}else if(this.dataset.t==='3'){this.dataset.t='4';this.src='image.png';}"
+           alt="ノアとグルムの月灯り書庫">
+    </div>
+
+    <div class="dialogue-box dialogue-glum">
+      <div class="speaker-label speaker-glum">🐾 グルムからの補足</div>
+      <p class="dialogue-text" id="resultGlumMsg"></p>
+    </div>
+
+    <!-- noteへの導線（ご指定のnoteリンク設定済み） -->
+    <div class="note-promo">
+      <h4>もっと深く、カードの意味を知りたいあなたへ</h4>
+      <p>月灯り書庫のnoteで、タロットの世界をさらに読み解いてみませんか？</p>
+      <a id="noteLinkBtn" class="btn" href="https://note.com/ready_hosta5469" target="_blank" rel="noopener noreferrer">noteで続きを読む</a>
+      <div id="noteStatusText" class="note-status-note"></div>
+    </div>
+
+    <div class="button-group">
+      <button class="btn" onclick="goToCardSelect()">別のカードを選ぶ</button>
+      <button class="btn btn-secondary" onclick="goToThemeSelect()">テーマを選び直す</button>
+      <button class="btn btn-secondary" onclick="goToHome()">書庫のトップへ戻る</button>
+    </div>
+  </section>
+</div>
+
+<script>
+  const APP_CONFIG = {
+    noteUrl: 'https://note.com/ready_hosta5469',
+
+    classicCardImages: {
+      "0": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg",
+      "I": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg",
+      "II": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg",
+      "III": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg",
+      "IV": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg",
+      "V": "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg",
+      "VI": "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg",
+      "VII": "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg",
+      "VIII": "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg",
+      "IX": "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg",
+      "X": "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg",
+      "XI": "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg",
+      "XII": "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg",
+      "XIII": "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg",
+      "XIV": "https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg",
+      "XV": "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg",
+      "XVI": "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg",
+      "XVII": "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg",
+      "XVIII": "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg",
+      "XIX": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg",
+      "XX": "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg",
+      "XXI": "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg"
+    }
+  };
+
+  const CARD_BACK_SVG = `
+    <svg class="card-back-svg" viewBox="0 0 100 162" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="162" fill="#0c1228"/>
+      <rect x="3" y="3" width="94" height="156" rx="6" fill="none" stroke="#cfa858" stroke-width="1.2" opacity="0.9"/>
+      <rect x="6" y="6" width="88" height="150" rx="4" fill="none" stroke="#cfa858" stroke-width="0.6" stroke-dasharray="2,1.5" opacity="0.6"/>
+      <circle cx="10" cy="10" r="1.5" fill="#f7e7be"/>
+      <circle cx="90" cy="10" r="1.5" fill="#f7e7be"/>
+      <circle cx="10" cy="152" r="1.5" fill="#f7e7be"/>
+      <circle cx="90" cy="152" r="1.5" fill="#f7e7be"/>
+      <g stroke="#cfa858" stroke-width="0.5" opacity="0.45">
+        <line x1="50" y1="81" x2="50" y2="46"/><line x1="50" y1="81" x2="50" y2="116"/>
+        <line x1="50" y1="81" x2="15" y2="81"/><line x1="50" y1="81" x2="85" y2="81"/>
+        <line x1="50" y1="81" x2="25" y2="56"/><line x1="50" y1="81" x2="75" y2="106"/>
+        <line x1="50" y1="81" x2="75" y2="56"/><line x1="50" y1="81" x2="25" y2="106"/>
+        <line x1="50" y1="81" x2="33" y2="49"/><line x1="50" y1="81" x2="67" y2="113"/>
+        <line x1="50" y1="81" x2="67" y2="49"/><line x1="50" y1="81" x2="33" y2="113"/>
+      </g>
+      <circle cx="50" cy="81" r="24" fill="none" stroke="#cfa858" stroke-width="0.8" opacity="0.8"/>
+      <circle cx="50" cy="81" r="20" fill="none" stroke="#cfa858" stroke-width="0.5" stroke-dasharray="1.5,1.5" opacity="0.7"/>
+      <path d="M 54 67 A 15 15 0 1 0 54 95 A 11.5 11.5 0 0 1 54 67 Z" fill="#f7e7be" opacity="0.95"/>
+      <circle cx="50" cy="38" r="1.8" fill="#f7e7be"/>
+      <circle cx="50" cy="124" r="1.8" fill="#f7e7be"/>
+      <circle cx="28" cy="81" r="1" fill="#f7e7be"/>
+      <circle cx="72" cy="81" r="1" fill="#f7e7be"/>
+      <circle cx="40" cy="62" r="0.8" fill="#f7e7be"/>
+      <circle cx="60" cy="100" r="0.8" fill="#f7e7be"/>
+    </svg>
+  `;
+
+  const TAROT_CARDS = [
+    {
+      id: "fool", num: "0", name: "愚者",
+      symbol: "自由な旅立ち・純粋な好奇心・先入観の手放し・無限の余白",
+      noah: "夜空を巡る風のように、あなたの足取りはどこまでも軽やかであってよいのです。完璧な地図や確かな保証を持たずとも、心がふと惹かれる方角へ歩き出してみる……その無邪気な一歩を、月明かりが静かに見守っていますよ。",
+      love: "相手の条件や周囲の常識にとらわれず、一緒にいるときの素直な心地よさを大切にしてみてください。飾らない言葉をひとつ交わすだけで、固まっていた距離がふわりとほどけるかもしれません。",
+      work: "過去の前例に縛られず、『まずは小さく試してみる』柔軟さが新たな風を呼び込みます。失敗を過度に恐れず、実験を楽しむような軽やかさを持ってみるのもひとつの道です。",
+      self: "『こうでなければならない』という自分への厳しさを、今日はひとつ解いてあげましょう。子どもの頃にただ楽しかった遊びのように、理由のないワクワクに目を向けてみてください。",
+      action: "普段は選ばない道を歩いてみるか、気になっていた本の扉を気負わずに1ページ開いてみる。",
+      question: "もし『誰にも評価されなくてもいい』としたら、今どんな小さなことを始めてみたいですか？",
+      glum: "大丈夫。最初から上手になんてできなくて当たり前なんだよ。深呼吸して、ぼくと一緒にのんびり歩いてみようね。"
+    },
+    {
+      id: "magician", num: "I", name: "魔術師",
+      symbol: "意志の芽生え・創造・手元にある可能性・新しいスタート",
+      noah: "机の上に並べられた本やインクのように、必要なきっかけはすでにあなたの両手の届く場所に揃いつつあります。未来の不安を数えるよりも、今の手元にある知恵と感覚を信じ、最初の一文字を静かに書き留めてみてください。",
+      love: "待つばかりではなく、あなたからささやかな挨拶や好意の言葉をそっと届けてみる時です。あなたの内側から零れる澄んだ明るさが、ふたりの空気を心地よく塗り替えていくでしょう。",
+      work: "頭の中にあるアイデアを、手近な紙に書き出してみるような小さな具体化が道を拓きます。完璧な条件を待つよりも、今できる手作業から着手してみるのが良い刺激になります。",
+      self: "『自分にはまだ何もない』と思えても、歩んできた日々は確かな知恵になっています。自分の持っている個性や工夫に、優しい信頼の光を当ててあげてくださいね。",
+      action: "やってみたいことや小さな工夫を、手帳のすみに3つだけ書き出してみる。",
+      question: "あなたがこれまでに重ねてきたことの中で、今日から活かせる小さな工夫は何でしょうか？",
+      glum: "きみにはきみだけの、素敵な力があるんだよ。うまく使えなくたっていいから、まずは楽しんで触ってみようね。"
+    },
+    {
+      id: "priestess", num: "II", name: "女教皇",
+      symbol: "静寂・内なる直感・客観的な知恵・心の静けさ",
+      noah: "古い書庫の奥で静かに息をひそめる書物のように、外の喧騒から少し身を引いてみる時です。答えを外へ急いで探しに行くのではなく、あなたの内側にある波立たない静かな湖面に、そっと耳を澄ませてみましょう。",
+      love: "感情をすぐにぶつけ合うのではなく、相手の言葉の背景や、自分の本音を静かに観察してみてください。少し間を置くことも、互いを大切にする穏やかな知恵です。",
+      work: "表面的な情報や噂に惑わされず、客観的な事実とご自身の直感を大切にしてください。焦って動くより、知識を深め状況を静観することが確かな安心につながります。",
+      self: "ざわめく感情を無理に押し込める必要はありません。水面に映る月を眺めるように、『そう感じているのだな』と静かに見守ってあげてくださいね。",
+      action: "静かな部屋で温かいお茶を飲みながら、スマートフォンを30分だけ手放してみる。",
+      question: "頭で考えた理屈の奥深くで、あなたの直感は今、何と囁いていますか？",
+      glum: "今は無理におしゃべりしなくても大丈夫だよ。静かなお部屋で、あったかい毛布にくるまってゆっくり過ごそうね。"
+    },
+    {
+      id: "empress", num: "III", name: "女帝",
+      symbol: "豊かさの受容・慈愛・心地よさ・育む時間",
+      noah: "大地が巡る季節の中で自然と実りを迎えるように、あなたの中にも豊かな愛と優しさが育まれています。自分を厳しく急かすのをやめ、日常にある温もりを全身で受け取ることを、どうかためらわないでください。",
+      love: "相手に尽くしすぎて疲れてしまう前に、まずあなた自身をご機嫌で満たしてあげましょう。あなたが心からリラックスして微笑んでいる姿こそが、何より心地よい絆を育みます。",
+      work: "数字や成果だけを追いかけるのではなく、関わる人との温かい対話や心地よい作業環境を整えてみてください。丁寧に耕された土壌からこそ、良い芽がゆっくりと育ちます。",
+      self: "五感が喜ぶ贈り物を自分に届けてあげてください。柔らかな衣服、心安らぐ香り、美味しい食事。自分を慈しむ時間が、心の深い部分を満たしてくれます。",
+      action: "今日一日を過ごした自分に、好きなお菓子や心地よい香りをひとつプレゼントする。",
+      question: "最近、自分自身を心からいたわり、心地よさに身を委ねたのはいつですか？",
+      glum: "きみはいつも十分がんばってるよ。今日はふかふかの枕で、自分をめいっぱい甘やかしていい日なんだからね。"
+    },
+    {
+      id: "emperor", num: "IV", name: "皇帝",
+      symbol: "基盤づくり・境界線・静かな責任感・日々の秩序",
+      noah: "夜の森にそびえる大樹のように、あなたの中には確かな軸と守るべき領域が存在しています。感情に流されるのではなく、現実的なペースを整え、ご自身の尊厳を静かに守ることが揺るがない安心感をもたらします。",
+      love: "お互いの違いを尊重し合いながら、心地よい境界線を保ちましょう。曖昧にせず、大切にしたいルールや想いを落ち着いた言葉で共有することが、深い信頼の土台になります。",
+      work: "段取りや優先順位を明確にすることが助けになります。ひとつずつ着実に積み上げる誠実な歩みが、周囲からの確かな信頼と成果を引き寄せるでしょう。",
+      self: "日々の生活リズムや小さな習慣を整えることで、心の乱れが自然と静まります。自分と交わした小さな約束をひとつ守ることが、自己信頼の礎になりますよ。",
+      action: "今日中にやっておきたいことを、落ち着いてメモに3つだけ整理してみる。",
+      question: "あなたの生活の中で、今いちばん『大切に守り、整えてあげたい枠組み』は何でしょうか？",
+      glum: "背筋をすっと伸ばしてみると、少しだけ落ち着いて強くなれる気がするよね。慌てず、一歩ずつ足元を固めていこう。"
+    },
+    {
+      id: "hierophant", num: "V", name: "教皇",
+      symbol: "伝統の知恵・導き・信頼・穏やかな対話",
+      noah: "書庫に眠る無数の記録のように、過去の教えや信頼できる先人の知恵は、あなたの足元をそっと照らしてくれます。ひとりで抱え込まず、基本に立ち返り、信頼できる言葉に耳を傾けてみてください。",
+      love: "誠意と礼節を大切にし、お互いの歩幅をゆっくり合わせていきましょう。派手な言葉よりも、日々の誠実な態度と思いやりが、周囲からも見守られる穏やかな絆を紡ぎます。",
+      work: "既存の手順やルールを丁寧におさらいし、経験のある人の知恵を素直に借りてみましょう。謙虚に相談を持ちかける姿勢が、思わぬ助け舟を呼び込みます。",
+      self: "普遍的な本を開いたり、心から信頼できる人の言葉に触れたりして、内なる指針を整えましょう。先人たちの知恵が、暗がりの中で確かな灯火になります。",
+      action: "信頼できる人に近況をぽつりと話してみるか、大切にしている本を数ページ読み返す。",
+      question: "あなたが心から尊敬する人なら、今のあなたの迷いにどんな穏やかな言葉をかけるでしょうか？",
+      glum: "ひとりで全部背負い込まなくていいんだよ。信頼できる誰かに『ちょっと聞いて』って甘えてみてもいいんだからね。"
+    },
+    {
+      id: "lovers", num: "VI", name: "恋人",
+      symbol: "心の共鳴・調和・純粋な選択・心地よい結びつき",
+      noah: "調和とは、互いの輪郭を慈しみ合うこと。義務や損得ではなく、あなたの心が静かに鳴り響く『好き』という感覚を大切にしてください。月明かりの下で響き合う心の音に、静かに身を委ねてみてくださいね。",
+      love: "お互いの違いを否定せず、違いがあるからこそ響き合える心地よさを感じられる時です。無理に合わせるのではなく、自然体で通い合う温度を大切にしましょう。",
+      work: "心から情熱を注げるテーマや、価値観の合う人との協働が道を拓きます。迷ったときは、あなたの心が少しでも明るくなる方を選んでみてください。",
+      self: "心の中にある相反する感情を否定せず、どちらも大切な自分の一部として認めてあげましょう。心地よさを選ぶ許可を、自分に出してくださいね。",
+      action: "迷っている選択肢があるなら、『胸の奥が軽くなる方』を直感で選んでみる。",
+      question: "誰の期待にも応えなくていいとしたら、あなたの心はどちらを選びたがっていますか？",
+      glum: "『どっちが好きなのかな？』って、自分の胸に優しく聞いてみてね。きみの『好き』はいつだって大事にしていいんだよ。"
+    },
+    {
+      id: "chariot", num: "VII", name: "戦車",
+      symbol: "意志の統合・確かな前進・集中・静かな推進力",
+      noah: "相反する気持ちや迷いを手綱でそっとまとめ上げ、前を向いて歩みを進める時です。手綱を引くのは他の誰でもなくあなた自身。心の中に宿る灯火を信じて、夜明け前の静けさを抜けて進んでいきましょう。",
+      love: "相手の出方を待つばかりではなく、自分の素直な想いや意図を落ち着いて行動で示してみましょう。小さな勇気が、滞っていた空気を動かします。",
+      work: "目標に向けて集中して取り組む好機です。途中に小さな障害があっても、工夫と粘り強さで乗り越えていける力強さがあなたに備わっています。",
+      self: "あれこれと不安を並べるのを一度やめ、『今日はこれだけを進める』と焦点を絞ってみましょう。体を動かすことで、心の霧は晴れていきますよ。",
+      action: "ずっと先延ばしにしていた小さな用事を、ひとつだけ片付けてみる。",
+      question: "今、ほんの少しの勇気を出して、前へ進めてみたいことは何ですか？",
+      glum: "よし、気合を入れて進んでみよう！ でもね、疲れたらいつでも休憩していいんだから、無理に突っ走らないでね。"
+    },
+    {
+      id: "strength", num: "VIII", name: "力",
+      symbol: "柔らかな強さ・受容・忍耐・優しい調和",
+      noah: "猛獣をそっと撫でる柔らかな指先のように、真の強さは優しさの衣をまとっています。力づくで押さえつけるのではなく、自分の中の不安や弱さも敵視せず、そっと抱きしめてあげる知恵を大切にしてください。",
+      love: "相手の不器用さや自分の感情の波を、急かさずに見守る姿勢が絆を深めます。時間をかけて育てる信頼こそが、何よりも揺るがない力になります。",
+      work: "一度に片付けようとせず、日々の丁寧な積み重ねを大切にしてください。穏やかで誠実なやり取りを続けることが、最も大きな信頼を勝ち得ます。",
+      self: "弱気になってしまう自分を責める必要はありません。『そう思ってしまうのも無理はないね』と優しく声をかけてあげることが、真の強さの始まりです。",
+      action: "焦りや苛立ちを感じたとき、胸にそっと手を当てて深く3回息を吐き出す。",
+      question: "今、力づくでどうにかしようとして、少し疲れてしまっていることはありませんか？",
+      glum: "ぎゅーって力いっぱい踏ん張らなくていいんだよ。弱虫な自分も、まるごとヨシヨシってしてあげてね。"
+    },
+    {
+      id: "hermit", num: "IX", name: "隠者",
+      symbol: "内省・静かな探求・足元の灯火・真の納得",
+      noah: "夜の森を歩くとき、遠くを照らす大光は必要ありません。足元を照らす小さなカンテラがあれば、迷わずに歩みを進められるものですよ。他人の答えではなく、あなたが心から納得できる真実を深める静寂の旅です。",
+      love: "無理に頻繁に連絡を取り合うよりも、互いの一人の時間を尊重し合える関係が安心をもたらします。静かに本音を語り合える時間を大切にしましょう。",
+      work: "周囲と比べるのをやめ、自分の専門性や技術を深めるのに適した時期です。目立たない場所での丁寧な下準備が、のちに確かな知恵となります。",
+      self: "『ひとりになりたい』という心のつぶやきを許してあげてください。孤独は寂しさではなく、自分という大切な友人と深く対話するための贅沢な時間です。",
+      action: "部屋の明かりをひとつ落とし、今日一日の出来事を静かにノートに振り返ってみる。",
+      question: "世間一般の正解ではなく、あなた自身が心から納得できる基準は何でしょうか？",
+      glum: "静かなお部屋で、毛布にくるまってぼんやりする時間って最高だよね。ひとりの時間をゆっくり楽しんでね。"
+    },
+    {
+      id: "wheel", num: "X", name: "運命の輪",
+      symbol: "巡り合わせ・好転の兆し・タイミング・自然な流れ",
+      noah: "運命の車輪は、見えない夜風に吹かれて音もなく巡っています。季節がめぐり夜が明けるように、滞っていた空気が自然と動き出す兆しです。恐れずにその風を胸に受けて、新しい景色へと向かいましょう。",
+      love: "ふとした偶然の会話や、思いがけないきっかけから関係が動き出す予感です。構えすぎず、自然な流れに乗ってみることで心地よい変化が訪れます。",
+      work: "環境の変わり目や、思わぬチャンスの声がかかったら、軽やかに応えてみましょう。タイミングを捉える直感が、静かに冴え渡っています。",
+      self: "良い時も静かな時も、すべては円を描くように巡っています。『今はこういう季節なのだ』と受け入れることで、心に柔らかな余裕が戻ってきます。",
+      action: "ふと目に入った情報や、人からのささやかなお誘いに、気負わず『Yes』と応えてみる。",
+      question: "今、あなたの身の回りで、静かに変わり始めている小さな流れは何ですか？",
+      glum: "くるくる回って、ちょうどいいタイミングがやってくるよ！ 準備体操だけして、気楽に待ってみようね。"
+    },
+    {
+      id: "justice", num: "XI", name: "正義",
+      symbol: "心の均衡・誠実な見つめ直し・公平・調和の決断",
+      noah: "天秤を釣り合わせるのは、静かに澄み渡った瞳です。白か黒かを急ぐのではなく、感情と理性のバランスを取り、自らの良心に恥じない誠実な姿勢を選ぶことが、あなたにとっての清らかな調和を生み出します。",
+      love: "与えることと受け取ることのバランスを点検してみましょう。どちらか一方だけが無理をする関係ではなく、お互いが対等にいられる心地よさを目指してください。",
+      work: "契約や約束事、役割分担を曖昧にせず、クリアに整理することが身を守ります。感情に流されない筋の通った対応が、最も確かな信頼を集めます。",
+      self: "自分を過剰に責めることも、無理に正当化することもやめ、ただ客観的に現状を見つめてみましょう。『今できること』が明確になり、心がすっきりと澄んできます。",
+      action: "日々の生活の中で『無理して引き受けていること』がないか、紙に書き出して見直す。",
+      question: "感情を横に置いたとき、あなたが最も誠実で心地よいと感じる選択肢はどちらですか？",
+      glum: "どっちが正しいか決めつけなくていいんだよ。ふーっと深呼吸して、ちょうどいい真ん中を探してみよう。"
+    },
+    {
+      id: "hangedman", num: "XII", name: "吊るされた男",
+      symbol: "視点の転換・手放す知恵・静かな熟成・待つ時間",
+      noah: "世界を逆さまに見つめるとき、見慣れた景色は神秘の書へと変わります。思うように動けないように見えて、実は大切な視点を手に入れるための休息。手放すことによってのみ訪れる、静かな自由を味わってください。",
+      love: "相手を思い通りに変えようとするのを一度手放してみましょう。見返りを求めずに見守る姿勢や、相手の立場から世界を眺めることで、氷が溶けるように空気が和らぎます。",
+      work: "力業で進められない案件は、無理に進めず充電や見直しの時期と割り切りましょう。視点を逆転させることで、思わぬ発想が湧き上がってきます。",
+      self: "『停滞している自分』を責めないでください。サナギが蝶になる前の静けさのように、あなたの内側では大切な熟成が進んでいますよ。",
+      action: "『何もしない時間』を意図的に15分作り、窓の外の空や天井をぼんやり眺めてみる。",
+      question: "今の状況を、まったく逆のポジティブな視点から眺めるとしたら、どんな恵みが見つかりますか？",
+      glum: "今は動かないのが正解なときもあるんだよ。のんびりぶら下がって、景色が変わるのを待とうね。"
+    },
+    {
+      id: "death", num: "XIII", name: "死神",
+      symbol: "静かな一区切り・脱皮・役目を終えたもの・新たな夜明け",
+      noah: "枯れ葉が土に還り春の新芽を育てるように、すべての終わりは新しい息吹の約束です。役目を終えた古いページが静かに閉じられ、新しい章が始まるための余白が生まれる時。恐れずに、古い扉をそっと閉じてください。",
+      love: "過去のわだかまりや執着にそっと別れを告げる時です。無理に維持していた関係性を見直すことで、より健やかで真新しい絆が芽吹き始めます。",
+      work: "うまくいかなくなった古いやり方や慣習に区切りをつけましょう。思い切ってリセットすることで、新しい試みが息を吹き返します。",
+      self: "『かつての自分』にしがみつくのをやめ、脱皮するように変化していく自分を受け入れてあげましょう。心の衣替えをする優しい季節です。",
+      action: "もう使わなくなった古い物をひとつ手放すか、不要になったメモを破棄してみる。",
+      question: "新しい自分を迎えるために、今そっと手放してもいい古い思い込みは何ですか？",
+      glum: "バイバイするのはちょっぴり寂しいけれど、大丈夫。次はきっと、もっと素敵な出会いが待っているからね。"
+    },
+    {
+      id: "temperance", num: "XIV", name: "節制",
+      symbol: "調和・循環・ほどよさ・静かな癒やし",
+      noah: "清らかな水がふたつの器を静かに行き交うように、心の中の相反する想いもやがてひとつに溶け合います。極端に走らず、『ほどほど』を慈しむことで、心と体の巡りが自然と整っていきます。無理のない歩みを愛してくださいね。",
+      love: "お互いの違いをぶつけ合うのではなく、足して二で割るような穏やかな妥協点を見つけられます。日常のささやかな優しさを、ゆっくり循環させましょう。",
+      work: "異なる意見の橋渡し役として力を発揮できます。急激な成果よりも、無理なく続けられるペースを整えることが、長期的な実りを生みます。",
+      self: "心と体の声に耳を傾けましょう。適度な運動、優しい食事、十分な睡眠というシンプルな調和を取り戻すことで、自然と元気が湧いてきます。",
+      action: "コップ一杯のお白湯をゆっくり味わい、身体の巡りに意識を向けてみる。",
+      question: "今のあなたの生活で、『やりすぎていること』と『控えすぎていること』の調和はどう取れますか？",
+      glum: "まぜまぜ、ちょうどいい加減が一番だよね。力まないで、ぬるめのお湯に浸かるみたいにリラックスしよう。"
+    },
+    {
+      id: "devil", num: "XV", name: "悪魔",
+      symbol: "無意識の縛り・執着への気づき・休息のサイン・鎖を解く",
+      noah: "影を恐れる必要はありません。影が濃いということは、すぐそばに強い光が存在している証なのですから。『どうしても手放せない習慣』に気づいたなら、鎖を解く鍵はいつもあなたの手の中にありますよ。",
+      love: "『こうしてくれないと不安』という依存や執着に気づいたら、一歩引いて深呼吸を。相手を縛る手を緩めることで、本当の温もりが戻ってきます。",
+      work: "義務感や見栄、完璧主義に心が囚われていないか点検しましょう。『本当に大切にしたいこと』を思い出すだけで、不要なプレッシャーから自由になれます。",
+      self: "自分を縛り付けていた『〜せねばならない』という思い込みに気づいてあげてください。気づくだけで、重かった心の鎧はぽろりと外れていきます。",
+      action: "つい無意識に見てしまうSNSや夜更かしを、今夜だけ30分早めに切り上げてみる。",
+      question: "あなたが『やめたいのに手放せない』と感じていることの奥に、どんな寂しさが隠れていますか？",
+      glum: "その鎖、実は引っ張ればすぐ外れるんだよ。『もういいや！』って手放しちゃっても、ぼくは怒らないからね。"
+    },
+    {
+      id: "tower", num: "XVI", name: "塔",
+      symbol: "古い枠組みの解放・予期せぬ気づき・風通しの良さ・目覚め",
+      noah: "雷鳴は、閉じこもっていた古い城壁を打ち破る天の調べです。無理に繕っていた窮屈な枠組みが崩れ去った場所に、遮るもののない広大な星空がすでに瞬いていますよ。恐れずに、新しい風通しの良さを受け入れてみてください。",
+      love: "本音を隠した表面的な取り繕いが通用しなくなり、素の自分でお互いに向き合う契機になります。雨降って地固まるように、真の信頼関係へと生まれ変わるでしょう。",
+      work: "予定の変更や急な見直しがあるかもしれませんが、より良い道へ修正するための好機です。古いやり方に固執せず、柔軟に対応してみてください。",
+      self: "『自分はこういう人間だから』と閉じ込めていた小さな塔から出られる時です。崩れた瓦礫の向こうには、どこまでも澄み渡る夜空が広がっています。",
+      action: "部屋の窓を大きく開けて外の澄んだ空気を胸いっぱいに吸い込み、古い空気を入れ替える。",
+      question: "もしこれまでの前提がすっかり崩れたとしたら、あなたは何を一番大切に選び直したいですか？",
+      glum: "びっくりしちゃったね。でもね、壊れちゃったおかげで、もっと居心地のいいお家を作れるんだよ。大丈夫。"
+    },
+    {
+      id: "star", num: "XVII", name: "星",
+      symbol: "希望の光・インスピレーション・遠くの導き・純粋な祈り",
+      noah: "夜が深いほど、星の光は清らかに冴え渡ります。暗い夜空の中に、澄んだ希望の星がひとつ灯る時。未来への不安を手放し、遠くで瞬くその導きを信じて、あなたの歩幅で静かに歩みを進めてください。",
+      love: "駆け引きのない純粋な想いが、互いの心を温めます。理想の絆を信じ、素直な感謝や憧れを伝えることで、穏やかな光が灯るでしょう。",
+      work: "クリエイティブな直感や、長期的なビジョンが湧き出る好機です。目先の利益に囚われず、本当に作りたい理想に向けて小さな種を蒔いてみましょう。",
+      self: "傷ついた心が静かに癒やされていくのを感じてください。あなたの存在そのものが、誰かをそっと照らす美しい星のひとつなのです。",
+      action: "夜空を見上げて一番星を探してみるか、心に浮かぶ純粋な願いをノートにひとつ書き留める。",
+      question: "あなたがずっと心の奥底で大切に温めてきた、純粋な祈りは何ですか？",
+      glum: "きれいな星が見えたね！ きみの願いごとは、きっと空に届いてるよ。楽しみに待っていようね。"
+    },
+    {
+      id: "moon", num: "XVIII", name: "月",
+      symbol: "揺らぎ・潜在意識の海・曖昧さの受容・夜の優しさ",
+      noah: "月明かりは輪郭を淡くぼかします。深い霧の中にいるように先が見えにくくても、焦って走らなければやがて目が慣れてくるものですよ。無理に白黒をつけようとせず、夜の静けさに身を預けてみてくださいね。",
+      love: "相手の些細な仕草に不安を感じてしまうときは、心が少し疲れているサインです。白黒をつけようと焦らず、穏やかな距離で見守りましょう。",
+      work: "見通しがはっきりしない時は、重要な決定を少し先送りにするのも賢明な知恵です。見えないところで何が動いているか、直感に耳を澄ませてください。",
+      self: "理由のない不安や寂しさを否定しないでください。月の満ち欠けのように、人の心にも満ち引きのリズムがあることを優しく許してあげましょう。",
+      action: "お風呂にゆっくり浸かり、浮かんでくるモヤモヤを泡と一緒に流すイメージを持つ。",
+      question: "今感じている不安のうち、『事実』ではなく『頭の中の想像』はどのくらいありますか？",
+      glum: "モヤモヤするときは、あったかいミルクでも飲んで早く寝ちゃおう。明日の朝には薄らいでるよ。"
+    },
+    {
+      id: "sun", num: "XIX", name: "太陽",
+      symbol: "素直な喜び・あたたかな生命力・無邪気さ・祝福",
+      noah: "夜明けの光は、すべての影を優しく溶かします。雲が晴れ、温かな光がすべてを照らし出す時。隠し事のない無邪気な心で、あなたという存在そのものが放つ光を、思いきり味わってください。",
+      love: "笑顔と楽しさを素直に分かち合える、明るく朗らかな時間です。飾らない感謝や喜びを伝えることで、絆は最高に暖かく育まれます。",
+      work: "これまでの地道な積み重ねが明るみに出て、周囲から温かい理解を得られる兆しです。自信を持って、あなたの持ち味を素直に表現してください。",
+      self: "子どものような純粋な無邪気さを取り戻しましょう。ただ生きていること、美味しいものを食べられることの温かな祝福を全身で感じてください。",
+      action: "朝起きたらカーテンを開け、窓辺の光を浴びて鏡の自分に小さく微笑んでみる。",
+      question: "今、あなたの心をぽかぽかと温かくしてくれるものは何でしょうか？",
+      glum: "わーい！ おひさまポカポカだね！ 笑いたいときは、思いっきり笑っちゃおうね！"
+    },
+    {
+      id: "judgement", num: "XX", name: "審判",
+      symbol: "魂の目覚め・再生・過去の報われ・確かな気づき",
+      noah: "静寂の書庫に響く柔らかな鐘の音のように、目覚めの時は訪れました。過去の経験やすべての迷いが一本の糸で結ばれ、新しい息吹を吹き込まれる時。あなたの歩んできたすべての小道は、決して無駄ではなかったのです。",
+      love: "わだかまりが解けたり、過去の痛みを越えて関係が新たな段階へ進んだりする再起の時です。素直な本音を言葉にすることで、深い絆が蘇ります。",
+      work: "過去の努力や温めていたアイデアが、思わぬ形で再評価される可能性があります。再び巡ってきたチャンスには、落ち着いて手を伸ばしてみてください。",
+      self: "『もう手遅れだ』ということは決してありません。あなたの心が本当に望んでいることへ、今ここから何度でも新しく歩み出せます。",
+      action: "昔好きだった音楽を聴き直してみるか、昔ノートに書いた夢をもう一度読み返してみる。",
+      question: "あなたの心の奥底で、『もう一度大切にしたい』と静かに呼びかけている声は何ですか？",
+      glum: "ほら、合図が聴こえたよ！ いつからだってやり直せるんだから、胸を張って一緒に行こうね。"
+    },
+    {
+      id: "world", num: "XXI", name: "世界",
+      symbol: "調和の完結・充足・ひとつの旅の結び・新たな円環",
+      noah: "円環は美しく閉じ、そして新たな宇宙の扉が静かに開きます。ひとつの旅が見事な調和をもって結ばれ、静かな充足感に包まれる時。あなたの物語は、今この瞬間、完璧な静けさに包まれていますよ。",
+      love: "お互いが自立しながらも深く響き合う、成熟した幸せを実感できる時です。ありのままの相手と自分を讃え合える、安心の絆を喜びましょう。",
+      work: "ひとつの区切りを迎え、達成感を味わえます。ここで得た経験と知恵は、次の新しい旅立ちに向けた最高のパスポートになるでしょう。",
+      self: "足りないものを数えるのをやめ、『今の自分ですでに満ちている』という充足に浸ってください。これまでの旅路を誇りに思ってくださいね。",
+      action: "胸に手を当てて、『ここまでよく歩いてきたね』と自分を心から褒めてあげる。",
+      question: "あなたがこれまでに乗り越えてきたことの中で、最も誇らしく思える歩みは何ですか？",
+      glum: "やったね、ゴールおめでとう！ 最高の旅だったよ！ 次の冒険も、ぼくがずっとそばにいるからね。"
+    }
+  ];
+
+  const state = {
+    selectedTheme: 'love',
+    selectedCard: null
+  };
+
+  const THEME_NAMES = {
+    love: '恋愛・対人関係',
+    work: '仕事・転機',
+    self: '自分自身・心の整理'
+  };
+
+  function showView(viewId) {
+    document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+    const target = document.getElementById(viewId);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function goToHome() { showView('view-home'); }
+  function goToThemeSelect() { showView('view-theme'); }
+  function goToCardSelect() {
+    renderCardDeck();
+    showView('view-cards');
+  }
+
+  function selectTheme(themeKey, element) {
+    state.selectedTheme = themeKey;
+    document.querySelectorAll('.theme-item').forEach(el => el.classList.remove('selected'));
+    element.classList.add('selected');
+  }
+
+  function renderCardDeck() {
+    const grid = document.getElementById('cardGrid');
+    grid.innerHTML = '';
+
+    const shuffledCards = [...TAROT_CARDS];
+    for (let i = shuffledCards.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledCards[i], shuffledCards[j]] = [shuffledCards[j], shuffledCards[i]];
+    }
+
+    shuffledCards.forEach((card, index) => {
+      const cardEl = document.createElement('div');
+      cardEl.className = 'tarot-card';
+      cardEl.setAttribute('role', 'button');
+      cardEl.setAttribute('aria-label', `カード ${index + 1}`);
+      
+      const cardImgUrl = APP_CONFIG.classicCardImages[card.num];
+
+      cardEl.innerHTML = `
+        <div class="card-face card-back">
+          ${CARD_BACK_SVG}
+        </div>
+        <div class="card-face card-front">
+          <img src="${cardImgUrl}" alt="${card.name}" onerror="this.parentElement.innerHTML='<div style=\\'padding:8px;text-align:center;color:#f7e7be;font-size:0.8rem;\\'>${card.num}<br>${card.name}</div>';">
+        </div>
+      `;
+
+      cardEl.addEventListener('click', () => onCardChosen(card, cardEl));
+      grid.appendChild(cardEl);
+    });
+  }
+
+  function onCardChosen(card, cardElement) {
+    document.querySelectorAll('.tarot-card').forEach(el => el.style.pointerEvents = 'none');
+    cardElement.classList.add('flipped');
+    state.selectedCard = card;
+
+    setTimeout(() => {
+      renderResult();
+      showView('view-result');
+    }, 600);
+  }
+
+  function renderResult() {
+    const card = state.selectedCard;
+    if (!card) return;
+
+    const themeKey = state.selectedTheme;
+    const themeName = THEME_NAMES[themeKey];
+
+    document.getElementById('resultThemeBadge').textContent = `相談テーマ：${themeName}`;
+
+    document.getElementById('resultCardNum').textContent = `ARCANUM ${card.num}`;
+    document.getElementById('resultCardName').textContent = card.name;
+    document.getElementById('resultCardSymbol').textContent = card.symbol;
+
+    const visualArea = document.getElementById('resultCardVisualArea');
+    const imagePath = APP_CONFIG.classicCardImages[card.num];
+
+    visualArea.innerHTML = `
+      <img src="${imagePath}" alt="${card.name}" 
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="card-visual-temp" style="display: none;">
+        <div class="tarot-icon">🎴</div>
+        <div style="font-size: 0.88rem; color: var(--gold-light); font-weight:600;">${card.name}</div>
+        <div style="font-size: 0.72rem; color: var(--text-muted);">${card.num}</div>
+      </div>
+    `;
+
+    document.getElementById('resultNoahMsg').textContent = card.noah;
+    document.getElementById('resultThemeHeading').textContent = `✦ ${themeName}に応じた解釈`;
+    document.getElementById('resultThemeMsg').textContent = card[themeKey];
+    document.getElementById('resultActionMsg').textContent = card.action;
+    document.getElementById('resultQuestionMsg').textContent = card.question;
+    document.getElementById('resultGlumMsg').textContent = `グルム『${card.glum}』`;
+
+    setupNoteLink();
+  }
+
+  function setupNoteLink() {
+    const noteBtn = document.getElementById('noteLinkBtn');
+    const noteStatus = document.getElementById('noteStatusText');
+
+    if (APP_CONFIG.noteUrl && APP_CONFIG.noteUrl.trim() !== '') {
+      noteBtn.href = APP_CONFIG.noteUrl;
+      noteBtn.classList.remove('disabled');
+      noteStatus.textContent = '';
+    } else {
+      noteBtn.href = 'javascript:void(0)';
+      noteBtn.classList.add('disabled');
+      noteStatus.textContent = '※ note記事のリンクは現在準備中です。公開後につながります。';
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    setupNoteLink();
+  });
+</script>
+</body>
+</html>
